@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+
+{% block title %}{{ 'Edit Project' if action == 'edit' else 'New Project' }} - Task Manager{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="bi bi-{{ 'pencil' if action == 'edit' else 'plus' }}-circle"></i>
+                    {{ 'Edit Project' if action == 'edit' else 'Create New Project' }}
+                </h5>
+            </div>
+            <div class="card-body">
+                <div id="error-message" class="alert alert-danger d-none"></div>
+                
+                <form id="project-form">
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Project Name <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="name" name="name" required
+                               value="{{ project.name if project else '' }}">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Description</label>
+                        <textarea class="form-control" id="description" name="description" rows="4">{{ project.description if project else '' }}</textarea>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="color" class="form-label">Color</label>
+                        <div class="input-group">
+                            <input type="color" class="form-control form-control-color" id="color" name="color" 
+                                   value="{{ project.color if project else '#007bff' }}">
+                            <span class="input-group-text">Pick a color for the project</span>
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between">
+                        <a href="/projects" class="btn btn-secondary">
+                            <i class="bi bi-arrow-left"></i> Cancel
+                        </a>
+                        <button type="submit" class="btn btn-primary" id="submit-btn">
+                            <i class="bi bi-check"></i>
+                            {{ 'Update Project' if action == 'edit' else 'Create Project' }}
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.getElementById('project-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const errorDiv = document.getElementById('error-message');
+    const btn = document.getElementById('submit-btn');
+    
+    errorDiv.classList.add('d-none');
+    btn.disabled = true;
+    
+    const formData = {
+        name: document.getElementById('name').value,
+        description: document.getElementById('description').value || null,
+        color: document.getElementById('color').value
+    };
+    
+    const projectId = {{ project.id if project else 'null' }};
+    const url = projectId ? `/api/projects/${projectId}` : '/api/projects';
+    const method = projectId ? 'PUT' : 'POST';
+    
+    try {
+        const response = await fetch(url, {
+            method: method,
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData)
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok) {
+            window.location.href = '/projects';
+        } else {
+            errorDiv.textContent = data.detail || 'An error occurred';
+            errorDiv.classList.remove('d-none');
+        }
+    } catch (error) {
+        errorDiv.textContent = 'An error occurred. Please try again.';
+        errorDiv.classList.remove('d-none');
+    } finally {
+        btn.disabled = false;
+    }
+});
+</script>
+{% endblock %}

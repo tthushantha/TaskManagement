@@ -1,0 +1,245 @@
+/* Custom CSS for Task Management Application */
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+/* Card hover effects */
+.card {
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Priority badges */
+.priority-low {
+    color: #6c757d;
+}
+
+.priority-medium {
+    color: #007bff;
+}
+
+.priority-high {
+    color: #ffc107;
+}
+
+.priority-urgent {
+    color: #dc3545;
+}
+
+/* Status indicators */
+.status-todo {
+    background-color: #6c757d;
+}
+
+.status-in-progress {
+    background-color: #ffc107;
+}
+
+.status-review {
+    background-color: #17a2b8;
+}
+
+.status-done {
+    background-color: #28a745;
+}
+
+/* Task list item */
+.task-item {
+    transition: background-color 0.2s;
+}
+
+.task-item:hover {
+    background-color: #f8f9fa;
+}
+
+/* Favorite star */
+.favorite-btn {
+    transition: transform 0.2s;
+}
+
+.favorite-btn:hover {
+    transform: scale(1.2);
+}
+
+/* Comment section */
+.comment-author {
+    font-weight: 600;
+}
+
+/* Loading spinner */
+.loading-spinner {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 3px solid rgba(0, 0, 0, 0.1);
+    border-radius: 50%;
+    border-top-color: #007bff;
+    animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Empty state */
+.empty-state {
+    text-align: center;
+    padding: 3rem;
+}
+
+.empty-state i {
+    font-size: 4rem;
+    color: #dee2e6;
+}
+
+.empty-state h4 {
+    color: #6c757d;
+    margin-top: 1rem;
+}
+
+.empty-state p {
+    color: #adb5bd;
+}
+
+/* Navbar brand animation */
+.navbar-brand {
+    transition: transform 0.2s;
+}
+
+.navbar-brand:hover {
+    transform: scale(1.05);
+}
+
+/* Status select */
+.status-select {
+    cursor: pointer;
+}
+
+/* Project color indicator */
+.project-color {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 8px;
+}
+
+/* Badge styles */
+.badge-urgent {
+    background-color: #dc3545;
+    color: white;
+}
+
+.badge-high {
+    background-color: #ffc107;
+    color: #212529;
+}
+
+.badge-medium {
+    background-color: #007bff;
+    color: white;
+}
+
+.badge-low {
+    background-color: #f8f9fa;
+    color: #212529;
+    border: 1px solid #dee2e6;
+}
+
+/* Table row animations */
+.table tbody tr {
+    transition: background-color 0.2s;
+}
+
+/* Form focus states */
+.form-control:focus,
+.form-select:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+/* Button transitions */
+.btn {
+    transition: all 0.2s;
+}
+
+/* Chart container */
+.chart-container {
+    position: relative;
+    height: 300px;
+}
+
+/* Sidebar stats */
+.stat-card {
+    border-left: 4px solid #007bff;
+}
+
+.stat-card.warning {
+    border-left-color: #ffc107;
+}
+
+.stat-card.success {
+    border-left-color: #28a745;
+}
+
+.stat-card.danger {
+    border-left-color: #dc3545;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .card-body {
+        padding: 1rem;
+    }
+    
+    .btn-group {
+        flex-direction: column;
+    }
+    
+    .btn-group .btn {
+        margin-bottom: 0.25rem;
+    }
+}
+
+/* Dark mode support (optional) */
+@media (prefers-color-scheme: dark) {
+    body {
+        background-color: #1a1a1a;
+        color: #e0e0e0;
+    }
+    
+    .card {
+        background-color: #2d2d2d;
+        border-color: #404040;
+    }
+    
+    .table {
+        color: #e0e0e0;
+    }
+    
+    .table-hover tbody tr:hover {
+        background-color: #3d3d3d;
+    }
+}

@@ -1,0 +1,167 @@
+i{% extends "base.html" %}
+
+{% block title %}{{ 'Edit Task' if action == 'edit' else 'New Task' }} - Task Manager{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="bi bi-{{ 'pencil' if action == 'edit' else 'plus' }}-circle"></i>
+                    {{ 'Edit Task' if action == 'edit' else 'Create New Task' }}
+                </h5>
+            </div>
+            <div class="card-body">
+                <div id="error-message" class="alert alert-danger d-none"></div>
+                
+                <form id="task-form">
+                    <div class="mb-3">
+                        <label for="title" class="form-label">Title <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="title" name="title" required
+                               value="{{ task.title if task else '' }}">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Description</label>
+                        <textarea class="form-control" id="description" name="description" rows="4">{{ task.description if task else '' }}</textarea>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="project_id" class="form-label">Project</label>
+                            <select class="form-select" id="project_id" name="project_id">
+                                <option value="">No Project</option>
+                                {% for project in projects %}
+                                <option value="{{ project.id }}" {% if task and task.project_id == project.id %}selected{% endif %}>
+                                    {{ project.name }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="assigned_to" class="form-label">Assignee</label>
+                            <select class="form-select" id="assigned_to" name="assigned_to">
+                                <option value="">Unassigned</option>
+                                {% for u in users %}
+                                <option value="{{ u.id }}" {% if task and task.assigned_to == u.id %}selected{% endif %}>
+                                    {{ u.full_name }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label for="status" class="form-label">Status</label>
+                            <select class="form-select" id="status" name="status">
+                                <option value="todo" {% if task and task.status.value == 'todo' %}selected{% endif %}>To Do</option>
+                                <option value="in_progress" {% if task and task.status.value == 'in_progress' %}selected{% endif %}>In Progress</option>
+                                <option value="review" {% if task and task.status.value == 'review' %}selected{% endif %}>Review</option>
+                                <option value="done" {% if task and task.status.value == 'done' %}selected{% endif %}>Done</option>
+                            </select>
+                        </div>
+                        
+                        <div class="col-md-4 mb-3">
+                            <label for="priority" class="form-label">Priority</label>
+                            <select class="form-select" id="priority" name="priority">
+                                <option value="low" {% if task and task.priority.value == 'low' %}selected{% endif %}>Low</option>
+                                <option value="medium" {% if not task or task.priority.value == 'medium' %}selected{% endif %}>Medium</option>
+                                <option value="high" {% if task and task.priority.value == 'high' %}selected{% endif %}>High</option>
+                                <option value="urgent" {% if task and task.priority.value == 'urgent' %}selected{% endif %}>Urgent</option>
+                            </select>
+                        </div>
+                        
+                        <div class="col-md-4 mb-3">
+                            <label for="due_date" class="form-label">Due Date</label>
+                            <input type="datetime-local" class="form-control" id="due_date" name="due_date"
+                                   value="{{ task.due_date.strftime('%Y-%m-%dT%H:%M') if task and task.due_date else '' }}">
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="estimated_hours" class="form-label">Estimated Hours</label>
+                            <input type="number" class="form-control" id="estimated_hours" name="estimated_hours" 
+                                   min="0" value="{{ task.estimated_hours if task and task.estimated_hours else '' }}">
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="tags" class="form-label">Tags</label>
+                            <input type="text" class="form-control" id="tags" name="tags" 
+                                   placeholder="Enter tags separated by commas"
+                                   value="{{ task.tags if task else '' }}">
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between">
+                        <a href="/tasks" class="btn btn-secondary">
+                            <i class="bi bi-arrow-left"></i> Cancel
+                        </a>
+                        <button type="submit" class="btn btn-primary" id="submit-btn">
+                            <i class="bi bi-check"></i>
+                            {{ 'Update Task' if action == 'edit' else 'Create Task' }}
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.getElementById('task-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const errorDiv = document.getElementById('error-message');
+    const btn = document.getElementById('submit-btn');
+    
+    errorDiv.classList.add('d-none');
+    btn.disabled = true;
+    
+    const formData = {
+        title: document.getElementById('title').value,
+        description: document.getElementById('description').value,
+        project_id: document.getElementById('project_id').value || null,
+        assigned_to: document.getElementById('assigned_to').value || null,
+        status: document.getElementById('status').value,
+        priority: document.getElementById('priority').value,
+        due_date: document.getElementById('due_date').value || null,
+        estimated_hours: document.getElementById('estimated_hours').value || null,
+        tags: document.getElementById('tags').value || null
+    };
+    
+    const taskId = {{ task.id if task else 'null' }};
+    const url = taskId ? `/api/tasks/${taskId}` : '/api/tasks';
+    const method = taskId ? 'PUT' : 'POST';
+    
+    try {
+        const response = await fetch(url, {
+            method: method,
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData)
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok) {
+            window.location.href = `/tasks/${data.id}`;
+        } else {
+            errorDiv.textContent = data.detail || 'An error occurred';
+            errorDiv.classList.remove('d-none');
+        }
+    } catch (error) {
+        errorDiv.textContent = 'An error occurred. Please try again.';
+        errorDiv.classList.remove('d-none');
+    } finally {
+        btn.disabled = false;
+    }
+});
+</script>
+{% endblock %}

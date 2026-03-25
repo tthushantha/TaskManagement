@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+
+{% block title %}Register - Task Manager{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-5 col-lg-4">
+        <div class="card shadow">
+            <div class="card-body p-5">
+                <div class="text-center mb-4">
+                    <i class="bi bi-kanban text-primary" style="font-size: 3rem;"></i>
+                    <h3 class="mt-2">Create Account</h3>
+                    <p class="text-muted">Join Task Manager today</p>
+                </div>
+                
+                <div id="error-message" class="alert alert-danger d-none"></div>
+                <div id="success-message" class="alert alert-success d-none"></div>
+                
+                <form id="register-form">
+                    <div class="mb-3">
+                        <label for="username" class="form-label">Username</label>
+                        <input type="text" class="form-control" id="username" name="username" required minlength="3">
+                        <div class="form-text">At least 3 characters</div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="email" name="email" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="full_name" class="form-label">Full Name</label>
+                        <input type="text" class="form-control" id="full_name" name="full_name" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Password</label>
+                        <input type="password" class="form-control" id="password" name="password" required minlength="6">
+                        <div class="form-text">At least 6 characters</div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="confirm_password" class="form-label">Confirm Password</label>
+                        <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary w-100" id="register-btn">
+                        <span class="spinner-border spinner-border-sm d-none" id="register-spinner"></span>
+                        Create Account
+                    </button>
+                </form>
+                
+                <div class="text-center mt-4">
+                    <p class="text-muted">
+                        Already have an account? <a href="/login">Sign in</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.getElementById('register-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const errorDiv = document.getElementById('error-message');
+    const successDiv = document.getElementById('success-message');
+    const spinner = document.getElementById('register-spinner');
+    const btn = document.getElementById('register-btn');
+    
+    const password = document.getElementById('password').value;
+    const confirmPassword = document.getElementById('confirm_password').value;
+    
+    if (password !== confirmPassword) {
+        errorDiv.textContent = 'Passwords do not match';
+        errorDiv.classList.remove('d-none');
+        return;
+    }
+    
+    errorDiv.classList.add('d-none');
+    successDiv.classList.add('d-none');
+    spinner.classList.remove('d-none');
+    btn.disabled = true;
+    
+    const data = {
+        username: document.getElementById('username').value,
+        email: document.getElementById('email').value,
+        full_name: document.getElementById('full_name').value,
+        password: password
+    };
+    
+    try {
+        const response = await fetch('/api/register', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        });
+        
+        const result = await response.json();
+        
+        if (response.ok) {
+            successDiv.textContent = 'Account created successfully! Redirecting to login...';
+            successDiv.classList.remove('d-none');
+            setTimeout(() => {
+                window.location.href = '/login';
+            }, 2000);
+        } else {
+            errorDiv.textContent = result.detail || 'Registration failed';
+            errorDiv.classList.remove('d-none');
+        }
+    } catch (error) {
+        errorDiv.textContent = 'An error occurred. Please try again.';
+        errorDiv.classList.remove('d-none');
+    } finally {
+        spinner.classList.add('d-none');
+        btn.disabled = false;
+    }
+});
+</script>
+{% endblock %}

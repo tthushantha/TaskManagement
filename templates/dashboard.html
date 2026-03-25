@@ -1,0 +1,249 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Task Manager{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h2><i class="bi bi-house"></i> Dashboard</h2>
+        <p class="text-muted">Welcome back, {{ user.full_name }}!</p>
+    </div>
+</div>
+
+<!-- Statistics Cards -->
+<div class="row g-3 mb-4">
+    <div class="col-sm-6 col-lg-3">
+        <div class="card border-primary">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-muted mb-2">Total Tasks</h6>
+                        <h3 class="mb-0">{{ stats.total_tasks }}</h3>
+                    </div>
+                    <div class="text-primary">
+                        <i class="bi bi-list-task" style="font-size: 2.5rem;"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-sm-6 col-lg-3">
+        <div class="card border-warning">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-muted mb-2">In Progress</h6>
+                        <h3 class="mb-0">{{ stats.in_progress_tasks }}</h3>
+                    </div>
+                    <div class="text-warning">
+                        <i class="bi bi-clock" style="font-size: 2.5rem;"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-sm-6 col-lg-3">
+        <div class="card border-success">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-muted mb-2">Completed</h6>
+                        <h3 class="mb-0">{{ stats.done_tasks }}</h3>
+                    </div>
+                    <div class="text-success">
+                        <i class="bi bi-check-circle" style="font-size: 2.5rem;"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-sm-6 col-lg-3">
+        <div class="card border-danger">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-muted mb-2">Overdue</h6>
+                        <h3 class="mb-0">{{ stats.overdue_tasks }}</h3>
+                    </div>
+                    <div class="text-danger">
+                        <i class="bi bi-exclamation-triangle" style="font-size: 2.5rem;"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Task Status Distribution -->
+<div class="row g-3 mb-4">
+    <div class="col-lg-8">
+        <div class="card h-100">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-pie-chart"></i> Task Distribution</h5>
+            </div>
+            <div class="card-body">
+                <canvas id="taskChart" height="200"></canvas>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-4">
+        <div class="card h-100">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-info-circle"></i> Quick Stats</h5>
+            </div>
+            <div class="card-body">
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <span><i class="bi bi-folder text-primary"></i> Projects</span>
+                        <span class="badge bg-primary rounded-pill">{{ stats.total_projects }}</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <span><i class="bi bi-people text-success"></i> Team Members</span>
+                        <span class="badge bg-success rounded-pill">{{ stats.total_users }}</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <span><i class="bi bi-clipboard text-warning"></i> To Do</span>
+                        <span class="badge bg-warning rounded-pill">{{ stats.todo_tasks }}</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <span><i class="bi bi-eye text-info"></i> In Review</span>
+                        <span class="badge bg-info rounded-pill">{{ stats.review_tasks }}</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Tasks -->
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="bi bi-clock-history"></i> Recent Tasks</h5>
+                <a href="/tasks/new" class="btn btn-primary btn-sm">
+                    <i class="bi bi-plus"></i> New Task
+                </a>
+            </div>
+            <div class="card-body">
+                {% if stats.recent_tasks %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th>Status</th>
+                                <th>Priority</th>
+                                <th>Project</th>
+                                <th>Due Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for task in stats.recent_tasks %}
+                            <tr style="cursor: pointer;" onclick="window.location='/tasks/{{ task.id }}'">
+                                <td>
+                                    <a href="/tasks/{{ task.id }}" class="text-decoration-none">
+                                        {{ task.title }}
+                                    </a>
+                                </td>
+                                <td>
+                                    {% if task.status.value == 'todo' %}
+                                    <span class="badge bg-secondary">To Do</span>
+                                    {% elif task.status.value == 'in_progress' %}
+                                    <span class="badge bg-warning">In Progress</span>
+                                    {% elif task.status.value == 'review' %}
+                                    <span class="badge bg-info">Review</span>
+                                    {% else %}
+                                    <span class="badge bg-success">Done</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if task.priority.value == 'low' %}
+                                    <span class="badge bg-light text-dark">Low</span>
+                                    {% elif task.priority.value == 'medium' %}
+                                    <span class="badge bg-primary">Medium</span>
+                                    {% elif task.priority.value == 'high' %}
+                                    <span class="badge bg-warning text-dark">High</span>
+                                    {% else %}
+                                    <span class="badge bg-danger">Urgent</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if task.project_name %}
+                                    <span class="text-muted">{{ task.project_name }}</span>
+                                    {% else %}
+                                    <span class="text-muted">No Project</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if task.due_date %}
+                                    <span class="{% if task.due_date < now %}text-danger{% endif %}">
+                                        {{ task.due_date.strftime('%Y-%m-%d') }}
+                                    </span>
+                                    {% else %}
+                                    <span class="text-muted">No due date</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="text-center py-5">
+                    <i class="bi bi-inbox text-muted" style="font-size: 4rem;"></i>
+                    <p class="text-muted mt-3">No tasks yet. Create your first task!</p>
+                    <a href="/tasks/new" class="btn btn-primary">
+                        <i class="bi bi-plus"></i> Create Task
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Task Distribution Chart
+    const ctx = document.getElementById('taskChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: ['To Do', 'In Progress', 'Review', 'Done'],
+            datasets: [{
+                data: [
+                    {{ stats.todo_tasks }},
+                    {{ stats.in_progress_tasks }},
+                    {{ stats.review_tasks }},
+                    {{ stats.done_tasks }}
+                ],
+                backgroundColor: [
+                    '#6c757d',
+                    '#ffc107',
+                    '#17a2b8',
+                    '#28a745'
+                ],
+                borderWidth: 2,
+                borderColor: '#fff'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                }
+            }
+        }
+    });
+});
+</script>
+{% endblock %}
