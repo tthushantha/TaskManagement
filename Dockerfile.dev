@@ -1,0 +1,65 @@
+# Development Dockerfile for Task Management Application
+# This version includes hot-reloading and development tools
+
+FROM node:18-alpine AS frontend-dev
+
+WORKDIR /app/frontend
+
+# Copy frontend package files
+COPY frontend/package*.json ./
+
+# Install frontend dependencies (including dev dependencies)
+RUN npm install
+
+# Copy frontend source code
+COPY frontend/ ./
+
+# Stage 2: Python backend with development features
+FROM python:3.11-slim
+
+WORKDIR /app
+
+# Install system dependencies including development tools
+RUN apt-get update && apt-get install -y \
+    gcc \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy Python requirements
+COPY requirements.txt .
+
+# Install Python dependencies including development tools
+RUN pip install --no-cache-dir -r requirements.txt \
+    && pip install --no-cache-dir watchdog black flake8 pytest
+
+# Copy backend application code
+COPY *.py ./
+COPY database.py ./
+COPY models.py ./
+COPY schemas.py ./
+COPY config.py ./
+
+# Copy templates and static files
+COPY templates/ ./templates/
+COPY static/ ./static/
+
+# Copy frontend development files
+COPY --from=frontend-dev /app/frontend ./frontend
+
+# Create necessary directories
+RUN mkdir -p logs uploads
+
+# Create non-root user
+RUN useradd --create-home --shell /bin/bash appuser && \
+    chown -R appuser:appuser /app
+USER appuser
+
+# Expose ports
+EXPOSE 8000 5173
+
+# Development startup script
+COPY docker-entrypoint-dev.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/docker-entrypoint-dev.sh
+
+# Run the development server with hot-reloading
+CMD ["docker-entrypoint-dev.sh"]

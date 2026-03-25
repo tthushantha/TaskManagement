@@ -1013,6 +1013,14 @@ async def api_dashboard_stats(request: Request, db: Session = Depends(get_db)):
     )
 
 
+# ==================== Health Check ====================
+
+@app.get("/health", tags=["Health"])
+async def health_check():
+    """Health check endpoint for Docker containers"""
+    return {"status": "healthy", "timestamp": datetime.now().isoformat()}
+
+
 # ==================== Main ====================
 
 if __name__ == "__main__":

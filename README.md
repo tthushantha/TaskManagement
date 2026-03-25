@@ -13,6 +13,47 @@ A web-based task management application designed for small teams and freelancers
 - **Favorites**: Mark important tasks as favorites
 - **Search & Filter**: Find tasks quickly with filters
 
+## Docker Deployment
+
+### Prerequisites
+- Docker and Docker Compose installed on your system
+
+### Quick Start with Docker
+
+1. **Build and run with Docker Compose:**
+   ```bash
+   docker-compose up --build
+   ```
+
+2. **Build and run with Docker directly:**
+   ```bash
+   # Build the image
+   docker build -t task-management .
+
+   # Run the container
+   docker run -p 8000:8000 task-management
+   ```
+
+3. **Access the application:**
+   Open your browser and navigate to `http://localhost:8000`
+
+### Docker Configuration
+
+The Docker setup includes:
+- **Multi-stage build**: Builds React frontend and Python backend separately
+- **Health checks**: Automatic health monitoring via `/health` endpoint
+- **Non-root user**: Runs with non-privileged user for security
+- **Optimized layers**: Efficient caching for faster rebuilds
+
+### Production Considerations
+
+For production deployment:
+1. Change the `SECRET_KEY` environment variable
+2. Use a proper database (PostgreSQL/MySQL) instead of SQLite
+3. Add a reverse proxy (nginx) for SSL termination
+4. Set up proper volume mounting for persistent data
+5. Configure proper logging and monitoring
+
 ## Project Structure
 
 ```
