@@ -45,7 +45,7 @@ COPY templates/ ./templates/
 COPY static/ ./static/
 
 # Copy built frontend from previous stage
-COPY --from=frontend-build /app/frontend/dist ./static/frontend
+#COPY --from=frontend-build /app/frontend/dist ./static/frontend
 
 # Create non-root user
 RUN useradd --create-home --shell /bin/bash appuser && \
