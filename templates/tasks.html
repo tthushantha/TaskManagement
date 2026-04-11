@@ -110,15 +110,9 @@
                             </select>
                         </td>
                         <td>
-                            {% if task.priority.value == 'low' %}
-                            <span class="badge bg-light text-dark">Low</span>
-                            {% elif task.priority.value == 'medium' %}
-                            <span class="badge bg-primary">Medium</span>
-                            {% elif task.priority.value == 'high' %}
-                            <span class="badge bg-warning text-dark">High</span>
-                            {% else %}
-                            <span class="badge bg-danger">Urgent</span>
-                            {% endif %}
+                            <span class="priority-{{ task.priority.value }}">
+                                {{ task.priority.value.title() }}
+                            </span>
                         </td>
                         <td>
                             {% if task.project_name %}
