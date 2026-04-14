@@ -125,6 +125,7 @@
         <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h5 class="mb-0"><i class="bi bi-clock-history"></i> Recent Tasks</h5>
+                <small class="text-muted">Showing latest 5 tasks</small>
                 <a href="/tasks/new" class="btn btn-primary btn-sm">
                     <i class="bi bi-plus"></i> New Task
                 </a>
@@ -143,7 +144,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            {% for task in stats.recent_tasks %}
+                            {% for task in stats.recent_tasks[:5] %}
                             <tr style="cursor: pointer;" onclick="window.location='/tasks/{{ task.id }}'">
                                 <td>
                                     <a href="/tasks/{{ task.id }}" class="text-decoration-none">
