@@ -29,39 +29,263 @@
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
-/* Priority badges */
+/* Enhanced Priority Indicators */
 .priority-low {
-    color: #6c757d;
+    background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+    color: #495057;
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    border: 1px solid #dee2e6;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.priority-low::before {
+    content: '↓';
+    font-size: 0.8rem;
+    opacity: 0.7;
 }
 
 .priority-medium {
-    color: #007bff;
+    background: linear-gradient(135deg, #007bff, #0056b3);
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    box-shadow: 0 2px 4px rgba(0, 123, 255, 0.3);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.priority-medium::before {
+    content: '→';
+    font-size: 0.8rem;
 }
 
 .priority-high {
-    color: #ffc107;
+    background: linear-gradient(135deg, #ffc107, #e0a800);
+    color: #212529;
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    box-shadow: 0 2px 4px rgba(255, 193, 7, 0.3);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    animation: pulse-high 2s infinite;
+}
+
+.priority-high::before {
+    content: '↑';
+    font-size: 0.8rem;
+}
+
+@keyframes pulse-high {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
 }
 
 .priority-urgent {
-    color: #dc3545;
+    background: linear-gradient(135deg, #dc3545, #c82333);
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    box-shadow: 0 2px 4px rgba(220, 53, 69, 0.3);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    animation: pulse-urgent 1s infinite;
 }
 
-/* Status indicators */
+.priority-urgent::before {
+    content: '!';
+    font-size: 0.8rem;
+    font-weight: bold;
+}
+
+@keyframes pulse-urgent {
+    0%, 100% { 
+        transform: scale(1); 
+        box-shadow: 0 2px 4px rgba(220, 53, 69, 0.3);
+    }
+    50% { 
+        transform: scale(1.05); 
+        box-shadow: 0 2px 8px rgba(220, 53, 69, 0.5);
+    }
+}
+
+/* Enhanced Status Indicators */
 .status-todo {
-    background-color: #6c757d;
+    background: linear-gradient(135deg, #6c757d, #5a6268);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-weight: 500;
+    box-shadow: 0 2px 4px rgba(108, 117, 125, 0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+.status-todo::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: left 0.5s;
+}
+
+.status-todo:hover::before {
+    left: 100%;
 }
 
 .status-in-progress {
-    background-color: #ffc107;
+    background: linear-gradient(135deg, #ffc107, #e0a800);
+    color: #212529;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-weight: 500;
+    box-shadow: 0 2px 4px rgba(255, 193, 7, 0.3);
+    position: relative;
+    overflow: hidden;
+    animation: pulse-progress 2s infinite;
+}
+
+.status-in-progress::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+    transition: left 0.5s;
+}
+
+.status-in-progress:hover::before {
+    left: 100%;
+}
+
+@keyframes pulse-progress {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.02); }
 }
 
 .status-review {
-    background-color: #17a2b8;
+    background: linear-gradient(135deg, #17a2b8, #138496);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-weight: 500;
+    box-shadow: 0 2px 4px rgba(23, 162, 184, 0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+.status-review::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: left 0.5s;
+}
+
+.status-review:hover::before {
+    left: 100%;
 }
 
 .status-done {
-    background-color: #28a745;
+    background: linear-gradient(135deg, #28a745, #1e7e34);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-weight: 500;
+    box-shadow: 0 2px 4px rgba(40, 167, 69, 0.3);
+    position: relative;
+    overflow: hidden;
 }
+
+.status-done::before {
+    content: '✓';
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-weight: bold;
+    opacity: 0.8;
+}
+
+.status-done::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: left 0.5s;
+}
+
+.status-done:hover::after {
+    left: 100%;
+}
+
+/* Progress bars for task completion */
+.task-progress {
+    width: 100%;
+    height: 8px;
+    background: #e9ecef;
+    border-radius: 4px;
+    overflow: hidden;
+    margin: 0.5rem 0;
+}
+
+.task-progress-bar {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.task-progress-bar::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.3),
+        transparent
+    );
+    animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}
+
+.progress-todo { background: linear-gradient(90deg, #6c757d, #5a6268); width: 0%; }
+.progress-in-progress { background: linear-gradient(90deg, #ffc107, #e0a800); width: 50%; }
+.progress-review { background: linear-gradient(90deg, #17a2b8, #138496); width: 75%; }
+.progress-done { background: linear-gradient(90deg, #28a745, #1e7e34); width: 100%; }
 
 /* Task list item */
 .task-item {
@@ -223,6 +447,119 @@
     }
 }
 
+/* Enhanced Task Detail Stats */
+.task-stat-card {
+    background: linear-gradient(135deg, #f8f9fa, #ffffff);
+    border: 1px solid #e9ecef;
+    border-radius: 12px;
+    padding: 1rem;
+    text-align: center;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.task-stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(0,123,255,0.1), transparent);
+    transition: left 0.5s;
+}
+
+.task-stat-card:hover::before {
+    left: 100%;
+}
+
+.task-stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.task-stat-value {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #007bff;
+    margin-bottom: 0.25rem;
+}
+
+.task-stat-label {
+    font-size: 0.75rem;
+    color: #6c757d;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Enhanced Quick Actions Sidebar */
+.quick-action-btn {
+    width: 100%;
+    padding: 0.75rem;
+    border-radius: 8px;
+    border: 1px solid #dee2e6;
+    background: white;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.quick-action-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(0,123,255,0.1), transparent);
+    transition: left 0.4s;
+}
+
+.quick-action-btn:hover::before {
+    left: 100%;
+}
+
+.quick-action-btn:hover {
+    transform: translateX(4px);
+    box-shadow: 0 2px 8px rgba(0,123,255,0.2);
+}
+
+/* Enhanced Activity Timeline */
+.activity-timeline {
+    position: relative;
+    padding-left: 1.5rem;
+}
+
+.activity-timeline::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: linear-gradient(180deg, #007bff, #6c757d);
+}
+
+.activity-item {
+    position: relative;
+    margin-bottom: 1rem;
+    padding-left: 1rem;
+}
+
+.activity-item::before {
+    content: '';
+    position: absolute;
+    left: -1.5rem;
+    top: 0.25rem;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: white;
+    border: 2px solid #007bff;
+    z-index: 1;
+}
+
 /* Dark mode support (optional) */
 @media (prefers-color-scheme: dark) {
     body {
@@ -241,5 +578,16 @@
     
     .table-hover tbody tr:hover {
         background-color: #3d3d3d;
+    }
+    
+    .task-stat-card {
+        background: linear-gradient(135deg, #2d2d2d, #404040);
+        border-color: #555;
+    }
+    
+    .quick-action-btn {
+        background: #2d2d2d;
+        border-color: #555;
+        color: #e0e0e0;
     }
 }

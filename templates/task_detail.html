@@ -9,10 +9,10 @@
         <div class="card mb-4">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <div>
-                    <span class="badge {% if task.status.value == 'todo' %}bg-secondary{% elif task.status.value == 'in_progress' %}bg-warning{% elif task.status.value == 'review' %}bg-info{% else %}bg-success{% endif %} me-2">
+                    <span class="status-{{ task.status.value }} me-2">
                         {{ task.status.value.replace('_', ' ').title() }}
                     </span>
-                    <span class="badge {% if task.priority.value == 'low' %}bg-light text-dark{% elif task.priority.value == 'medium' %}bg-primary{% elif task.priority.value == 'high' %}bg-warning text-dark{% else %}bg-danger{% endif %}">
+                    <span class="priority-{{ task.priority.value }}">
                         {{ task.priority.value.title() }}
                     </span>
                     {% if task.is_favorite %}
@@ -27,6 +27,11 @@
             </div>
             <div class="card-body">
                 <h3 class="card-title">{{ task.title }}</h3>
+                
+                <!-- Task Progress Bar -->
+                <div class="task-progress mt-2">
+                    <div class="task-progress-bar progress-{{ task.status.value }}"></div>
+                </div>
                 
                 {% if task.description %}
                 <p class="card-text text-muted">{{ task.description }}</p>
@@ -91,20 +96,28 @@
                 
                 <div class="row text-center">
                     <div class="col-3">
-                        <div class="text-muted small">Views</div>
-                        <div class="fw-semibold">{{ task.view_count }}</div>
+                        <div class="task-stat-card">
+                            <div class="task-stat-value">{{ task.view_count }}</div>
+                            <div class="task-stat-label">Views</div>
+                        </div>
                     </div>
                     <div class="col-3">
-                        <div class="text-muted small">Comments</div>
-                        <div class="fw-semibold">{{ task.comment_count }}</div>
+                        <div class="task-stat-card">
+                            <div class="task-stat-value">{{ task.comment_count }}</div>
+                            <div class="task-stat-label">Comments</div>
+                        </div>
                     </div>
                     <div class="col-3">
-                        <div class="text-muted small">Attachments</div>
-                        <div class="fw-semibold">{{ task.attachment_count }}</div>
+                        <div class="task-stat-card">
+                            <div class="task-stat-value">{{ task.attachment_count }}</div>
+                            <div class="task-stat-label">Attachments</div>
+                        </div>
                     </div>
                     <div class="col-3">
-                        <div class="text-muted small">Time</div>
-                        <div class="fw-semibold">{{ task.actual_hours if task.actual_hours else 0 }}h / {{ task.estimated_hours if task.estimated_hours else 0 }}h</div>
+                        <div class="task-stat-card">
+                            <div class="task-stat-value">{{ task.actual_hours if task.actual_hours else 0 }}h</div>
+                            <div class="task-stat-label">Time Spent</div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -173,12 +186,12 @@
             </div>
             <div class="card-body">
                 <div class="d-grid gap-2">
-                    <button class="btn btn-outline-primary" onclick="toggleFavorite({{ task.id }})">
-                        <i class="bi {% if task.is_favorite %}bi-star-fill{% else %}bi-star{% endif %}"></i>
+                    <button class="quick-action-btn" onclick="toggleFavorite({{ task.id }})">
+                        <i class="bi {% if task.is_favorite %}bi-star-fill text-warning{% else %}bi-star{% endif %}"></i>
                         {% if task.is_favorite %}Remove from Favorites{% else %}Add to Favorites{% endif %}
                     </button>
                     
-                    <select class="form-select" onchange="updateStatus({{ task.id }}, this.value)">
+                    <select class="form-select quick-action-btn" onchange="updateStatus({{ task.id }}, this.value)">
                         <option value="todo" {% if task.status.value == 'todo' %}selected{% endif %}>To Do</option>
                         <option value="in_progress" {% if task.status.value == 'in_progress' %}selected{% endif %}>In Progress</option>
                         <option value="review" {% if task.status.value == 'review' %}selected{% endif %}>Review</option>
@@ -194,22 +207,22 @@
                 <h5 class="mb-0"><i class="bi bi-activity"></i> Activity</h5>
             </div>
             <div class="card-body">
-                <ul class="list-unstyled small">
-                    <li class="mb-2">
-                        <i class="bi bi-pencil text-muted"></i>
+                <div class="activity-timeline">
+                    <div class="activity-item">
+                        <i class="bi bi-pencil text-muted me-2"></i>
                         <span class="text-muted">Updated {{ task.updated_at.strftime('%Y-%m-%d %H:%M') }}</span>
-                    </li>
-                    <li class="mb-2">
-                        <i class="bi bi-plus-circle text-muted"></i>
+                    </div>
+                    <div class="activity-item">
+                        <i class="bi bi-plus-circle text-muted me-2"></i>
                         <span class="text-muted">Created {{ task.created_at.strftime('%Y-%m-%d %H:%M') }}</span>
-                    </li>
+                    </div>
                     {% if task.completed_at %}
-                    <li>
-                        <i class="bi bi-check-circle text-success"></i>
+                    <div class="activity-item">
+                        <i class="bi bi-check-circle text-success me-2"></i>
                         <span class="text-muted">Completed {{ task.completed_at.strftime('%Y-%m-%d %H:%M') }}</span>
-                    </li>
+                    </div>
                     {% endif %}
-                </ul>
+                </div>
             </div>
         </div>
     </div>
