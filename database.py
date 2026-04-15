@@ -9,7 +9,9 @@ from config import DATABASE_URL
 engine = create_engine(
     DATABASE_URL,
     connect_args={"check_same_thread": False} if "sqlite" in DATABASE_URL else {},
-    echo=False
+    echo=False,
+    pool_pre_ping=True,  # Check connections before use
+    pool_recycle=300,     # Recycle connections every 5 minutes
 )
 
 # Create session factory

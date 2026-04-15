@@ -31,8 +31,12 @@ from schemas import (
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Startup
-    init_db()
-    create_default_data()
+    try:
+        init_db()
+        create_default_data()
+    except Exception as e:
+        print(f"Database initialization error: {e}")
+        # Continue without database initialization for now
     yield
     # Shutdown (if needed)
 
