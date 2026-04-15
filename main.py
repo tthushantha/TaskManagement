@@ -2,7 +2,7 @@
 Task Management Application - Main FastAPI Application
 """
 from contextlib import asynccontextmanager
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Optional, List
 from math import ceil
 
@@ -206,8 +206,9 @@ async def home(request: Request, db: Session = Depends(get_db)):
     in_progress_tasks = db.query(Task).filter(Task.status == TaskStatus.IN_PROGRESS).count()
     review_tasks = db.query(Task).filter(Task.status == TaskStatus.REVIEW).count()
     done_tasks = db.query(Task).filter(Task.status == TaskStatus.DONE).count()
+    current_utc_naive = datetime.now(timezone.utc).replace(tzinfo=None)
     overdue_tasks = db.query(Task).filter(
-        Task.due_date < datetime.utcnow(),
+        Task.due_date < current_utc_naive,
         Task.status != TaskStatus.DONE
     ).count()
     total_projects = db.query(Project).filter(Project.is_active == True).count()
@@ -253,7 +254,8 @@ async def home(request: Request, db: Session = Depends(get_db)):
     
     return templates.TemplateResponse(request, "dashboard.html", {
         "user": user,
-        "stats": stats
+        "stats": stats,
+        "now": current_utc_naive
     })
 
 
@@ -335,7 +337,8 @@ async def tasks_page(
         "user": user,
         "tasks": task_list,
         "projects": projects,
-        "filters": {"status": status, "priority": priority, "project_id": project_id, "search": search}
+        "filters": {"status": status, "priority": priority, "project_id": project_id, "search": search},
+        "now": datetime.now(timezone.utc).replace(tzinfo=None)
     })
 
 
@@ -396,7 +399,8 @@ async def task_detail_page(request: Request, task_id: int, db: Session = Depends
         "task": task,
         "comments": comment_list,
         "projects": projects,
-        "users": users
+        "users": users,
+        "now": datetime.now(timezone.utc).replace(tzinfo=None)
     })
 
 
