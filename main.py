@@ -97,7 +97,7 @@ app.add_middleware(
     session_cookie="session_id",
     max_age=1800,  # 30 minutes
     same_site="lax",  # Allow cross-origin requests
-    httponly=False,  # Allow JavaScript access (needed for axios)
+    https_only=False,  # Allow HTTP access (needed for development)
 )
 
 # Setup templates and static files
