@@ -47,7 +47,13 @@ app = FastAPI(
 # Add CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Allows all origins
+    allow_origins=[
+        "http://localhost:3000",
+        "http://localhost:5173", 
+        "http://127.0.0.1:3000",
+        "http://127.0.0.1:5173",
+        "https://task-management-psi-sandy-64.vercel.app"
+    ],
     allow_credentials=True,
     allow_methods=["*"],  # Allows all methods
     allow_headers=["*"],  # Allows all headers
@@ -58,7 +64,9 @@ app.add_middleware(
     SessionMiddleware,
     secret_key=SECRET_KEY,
     session_cookie="session_id",
-    max_age=1800  # 30 minutes
+    max_age=1800,  # 30 minutes
+    same_site="lax",  # Allow cross-origin requests
+    httponly=False,  # Allow JavaScript access (needed for axios)
 )
 
 # Setup templates and static files
