@@ -13,6 +13,10 @@ DATABASE_URL = os.getenv(
     f"sqlite:///{BASE_DIR}/task_management.db"
 )
 
+# For Vercel/Production PostgreSQL
+if os.getenv("VERCEL") or os.getenv("POSTGRES_URL"):
+    DATABASE_URL = os.getenv("POSTGRES_URL") or os.getenv("DATABASE_URL")
+
 # Security
 SECRET_KEY = os.getenv("SECRET_KEY", "your-secret-key-change-in-production")
 ALGORITHM = "HS256"
