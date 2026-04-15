@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+
+{% block title %}Login - Task Manager{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-5 col-lg-4">
+        <div class="card shadow">
+            <div class="card-body p-5">
+                <div class="text-center mb-4">
+                    <i class="bi bi-kanban text-primary" style="font-size: 3rem;"></i>
+                    <h3 class="mt-2">Task Manager</h3>
+                    <p class="text-muted">Sign in to your account</p>
+                </div>
+                
+                <div id="error-message" class="alert alert-danger d-none"></div>
+                
+                <form id="login-form">
+                    <div class="mb-3">
+                        <label for="username" class="form-label">Username</label>
+                        <input type="text" class="form-control" id="username" name="username" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Password</label>
+                        <input type="password" class="form-control" id="password" name="password" required>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary w-100" id="login-btn">
+                        <span class="spinner-border spinner-border-sm d-none" id="login-spinner"></span>
+                        Sign In
+                    </button>
+                </form>
+                
+                <div class="text-center mt-4">
+                    <p class="text-muted">
+                        Don't have an account? <a href="/register">Register</a>
+                    </p>
+                </div>
+                
+                <hr>
+                
+                <div class="text-center text-muted small">
+                    <p class="mb-1">Demo Credentials:</p>
+                    <p class="mb-0">Username: <strong>admin</strong></p>
+                    <p class="mb-0">Password: <strong>admin123</strong></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.getElementById('login-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const errorDiv = document.getElementById('error-message');
+    const spinner = document.getElementById('login-spinner');
+    const btn = document.getElementById('login-btn');
+    
+    errorDiv.classList.add('d-none');
+    spinner.classList.remove('d-none');
+    btn.disabled = true;
+    
+    const payload = {
+        username: document.getElementById('username').value,
+        password: document.getElementById('password').value
+    };
+    
+    try {
+        const response = await fetch('/api/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(payload)
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok) {
+            window.location.href = '/';
+        } else {
+            errorDiv.textContent = data.detail || 'Login failed';
+            errorDiv.classList.remove('d-none');
+        }
+    } catch (error) {
+        errorDiv.textContent = 'An error occurred. Please try again.';
+        errorDiv.classList.remove('d-none');
+    } finally {
+        spinner.classList.add('d-none');
+        btn.disabled = false;
+    }
+});
+</script>
+{% endblock %}
