@@ -44,20 +44,47 @@ app = FastAPI(
     lifespan=lifespan
 )
 
-# Add CORS middleware
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=[
+# Dynamic CORS middleware to handle multiple origins with credentials
+from fastapi import Request, Response
+
+@app.middleware("http")
+async def dynamic_cors_middleware(request: Request, call_next):
+    origin = request.headers.get("origin")
+    
+    # List of allowed origins
+    allowed_origins = [
         "http://localhost:3000",
         "http://localhost:5173", 
+        "http://localhost:8080",
+        "http://localhost:8000",
         "http://127.0.0.1:3000",
         "http://127.0.0.1:5173",
-        "https://task-management-psi-sandy-64.vercel.app"
-    ],
-    allow_credentials=True,
-    allow_methods=["*"],  # Allows all methods
-    allow_headers=["*"],  # Allows all headers
-)
+        "http://127.0.0.1:8080",
+        "http://127.0.0.1:8000",
+        "https://task-management-psi-sandy-64.vercel.app",
+        "https://localhost:3000",
+        "https://localhost:5173"
+    ]
+    
+    # Handle preflight requests
+    if request.method == "OPTIONS":
+        response = Response()
+        if origin in allowed_origins:
+            response.headers["Access-Control-Allow-Origin"] = origin
+            response.headers["Access-Control-Allow-Credentials"] = "true"
+            response.headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS, HEAD, PATCH"
+            response.headers["Access-Control-Allow-Headers"] = "*"
+            response.headers["Access-Control-Max-Age"] = "600"
+        return response
+    
+    # Handle actual requests
+    response = await call_next(request)
+    if origin in allowed_origins:
+        response.headers["Access-Control-Allow-Origin"] = origin
+        response.headers["Access-Control-Allow-Credentials"] = "true"
+        response.headers["Access-Control-Expose-Headers"] = "*"
+    
+    return response
 
 # Add session middleware
 app.add_middleware(
